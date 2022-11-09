@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<!-- CSC 337: Assignment BestReads  -->
+<!-- Author: Robert Lopez -->
+<head>
+<link rel="stylesheet" type="text/css" href="bestreads.css" />
+<title>Best Reads</title>
+</head>
+<body onload="showAllCovers()">
+
+	<div class="header">
+		<div>
+			<span>bestreads</span>
+		</div>
+		<span class="back" onclick='showAllCovers()'>home</span>
+	</div>
+
+	<div id="allCovers"></div>
+
+	<script>
+		var toChange = document.getElementById("allCovers");
+		function showAllCovers() {
+			var ajax = new XMLHttpRequest();
+			ajax.open("GET", "bestreads.php?action=showAll", true);
+			ajax.send();
+
+			ajax.onreadystatechange = function() {
+				if (ajax.readyState === 4 && ajax.status === 200) {
+					var images = JSON.parse(ajax.responseText);
+					var covers = "";
+					var str = "";
+					for (i = 0; i < images.length; i++) {
+						str += "<div class = 'onebook'><img src ='" + images[i]
+								+ "/cover.jpg" + "'id='" + images[i]
+								+ "' onclick='review(this)'></div>";
+					}
+					toChange.innerHTML = str;
+				}
+
+			}
+		}
+		function review(book) {
+			var ajax = new XMLHttpRequest();
+			var folderName = book.id;
+			ajax.open("GET", "bestreads.php?action=each&folderName="
+					+ folderName, true);
+			ajax.send();
+			ajax.onreadystatechange = function() {
+				if (ajax.readyState === 4 && ajax.status === 200) {
+					toChange.innerHTML = ajax.responseText;
+				}
+			}
+		}
+	</script>
+
+</body>
+</html>
